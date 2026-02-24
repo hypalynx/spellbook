@@ -1,4 +1,7 @@
-use clap::{Parser,Args,Subcommand};
+mod config;
+mod serve;
+
+use clap::{Parser, Args, Subcommand};
 use std::fs;
 use std::path::PathBuf;
 
@@ -80,11 +83,14 @@ fn main() {
 
     println!("Reading config from {:?}", config_path);
 
-    let contents = fs::read_to_string(&config_path)
-        .expect("Failed to read config file");
+    let contents = fs::read_to_string(&config_path).expect("Failed to read config file");
 
-    let value: serde_yaml::Value = serde_yaml::from_str(&contents)
-        .expect("Failed to parse YAML");
+    let cfg: config::Config = serde_yaml::from_str(&contents).expect("Failed to parse config");
 
-    println!("{:#?}", value);
+    match cli.cmd {
+        SubCommands::Serve(args) => serve::serve_model(&args.model, &cfg),
+        SubCommands::Config(cfg_args) => match cfg_args.cmd {
+            ConfigCmd::Create => println!("Config already at: {:?}", config_path),
+        },
+    }
 }
