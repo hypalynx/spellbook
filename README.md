@@ -1,6 +1,6 @@
-# XLM - the eXperimentation Language Model tool
+# LMX - Language Model eXperimentation CLI Tool
 
-_xlm is a cli tool you can use to configure and run LLMs
+_lmx is a CLI tool you can use to configure and run LLMs
 locally using opencode + llama.cpp._
 
 This tool was created so I could test out different language
@@ -9,32 +9,31 @@ since they both update very frequently).
 
 ## Getting Started
 
-- `xlm config create` will create a minimal config for you.
-- `xlm config edit` (optional) if you want to setup your own
+- `lmx config create` will create a minimal config for you.
+- `lmx config edit` (optional) if you want to setup your own
   models/tweak settings, it will open the config file with
   whatever is set to `EDITOR` in your shell configuration.
-- `xlm serve --model llama-3.2-3b` will call llama using the
-  configuratin you've defined.
+- `lmx serve llama-3.2-3b` will run the model using the
+  configuration you've defined.
 - Then you can use `opencode` to connect to your running LLM
   server (via llama.cpp) and start prompting!
 
 ## Example Configuration
 
-`xlm` will read a YAML file that it uses for configuration,
+`lmx` will read a YAML file that it uses for configuration,
 here's what I use:
 
 ```yaml
 tools:
+  auto-install: true
   opencode: # An agentic interface to interact with models.
     version: "1.2.3"
   llama.cpp: # used to run the LLM models you download.
-    version: "b8077"
-  hugging-face-cli: # used to download models from Hugging Face.
-    version: "1.4.1"
+    version: "05fa625e"
 
-defaults:
+model-defaults:
   n-parallel: 1
-  mmap: "true" # possible that we want this as 'true', slowdown?
+  mmap: true
   ctx-token-key: q4_0
   ctx-token-val: q4_0
   threads: 10

@@ -1,6 +1,8 @@
 use crate::config::Config;
+use crate::checks::verify_dependencies;
 
 pub fn serve_model(model_name: &str, config: &Config) {
+    verify_dependencies(config);
     let model = config.models.get(model_name).unwrap_or_else(|| {
         eprintln!("Model '{}' not found.", model_name);
         eprintln!(

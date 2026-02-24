@@ -1,10 +1,11 @@
 [package]
-name = "xlm"
+name = "lmx"
 version = "0.1.0"
 edition = "2024"
 
 [dependencies]
 clap = { version = "4.5.60", features = ["derive"] }
 dirs = "6.0.0"
+which = "6.0.1"
 serde = { version = "1.0.228", features = ["derive"] }
 serde_yaml = "0.9.34"

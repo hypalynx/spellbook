@@ -1,3 +1,4 @@
+mod checks;
 mod config;
 mod serve;
 
@@ -6,18 +7,18 @@ use std::fs;
 use std::path::PathBuf;
 
 #[derive(Parser)]
-#[command(name = "xlm",
+#[command(name = "lmx",
  author,
  version,
  arg_required_else_help = true,
- about = "xlm, LLM CLI tool",
+ about = "lmx, Language Model eXperimentation CLI tool",
  long_about = "A CLI tool for managing and running LLM models via llama.cpp with YAML config.
 
  Examples:
-    xlm serve llama-3.2-1b  Run a model
-    xlm config create       Create default config
-    xlm list                List available models
-    xlm --help              See this help message again!
+    lmx serve llama-3.2-1b  Run a model
+    lmx config create       Create default config
+    lmx list                List available models
+    lmx --help              See this help message again!
  "
 )]
 struct Cli {
@@ -58,8 +59,8 @@ enum ConfigCmd {
 fn default_config_path() -> PathBuf {
     dirs::config_dir()
         .unwrap_or_else(|| PathBuf::from(".")) // more graceful handling?
-        .join("xlm")
-        .join("xlm.yaml")
+        .join("lmx")
+        .join("lmx.yaml")
 }
 
 fn main() {

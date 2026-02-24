@@ -3,7 +3,7 @@ tools:
   opencode:
     version: "1.2.3"
   llama.cpp:
-    version: "b8077"
+    version: "05fa625e"
 
 model-defaults:
   n-parallel: 1

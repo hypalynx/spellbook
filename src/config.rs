@@ -3,9 +3,27 @@ use std::collections::HashMap;
 
 #[derive(Deserialize)]
 pub struct Config {
+    #[serde(default)]
+    pub tools: Tools,
     #[serde(rename = "model-defaults", default)]
     pub model_defaults: ModelDefaults,
     pub models: HashMap<String, ModelConfig>,
+}
+
+#[derive(Deserialize, Default)]
+pub struct Tools {
+    #[serde(rename = "auto-install", default)]
+    pub auto_install: bool,
+    #[serde(default)]
+    pub opencode: ToolVersion,
+    #[serde(rename = "llama.cpp", default)]
+    pub llama_cpp: ToolVersion,
+}
+
+#[derive(Deserialize, Default)]
+pub struct ToolVersion {
+    #[serde(default)]
+    pub version: String,
 }
 
 #[derive(Deserialize, Default)]
