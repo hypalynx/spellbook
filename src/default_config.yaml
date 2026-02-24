@@ -1,0 +1,25 @@
+tools:
+  auto-install: true
+  opencode:
+    version: "1.2.3"
+  llama.cpp:
+    version: "b8077"
+
+model-defaults:
+  n-parallel: 1
+  mmap: true
+  ctx-token-key: q4_0
+  ctx-token-val: q4_0
+  threads: 10
+
+models:
+  llama-3.2-1b:
+    source:
+      repo: "bartowski/Llama-3.2-1B-Instruct-GGUF"
+      file: "Llama-3.2-1B-Instruct-Q4_K_M.gguf"
+    context: 32768
+    gpu-layers: 99
+    temp: 0.6
+    top-p: 0.85
+    top-k: 30
+    repeat-penalty: 1.15
