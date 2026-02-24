@@ -25,12 +25,14 @@ here's what I use:
 
 ```yaml
 tools:
-  opencode:
+  opencode: # An agentic interface to interact with models.
     version: "1.2.3"
-  llama.cpp:
+  llama.cpp: # used to run the LLM models you download.
     version: "b8077"
+  hugging-face-cli: # used to download models from Hugging Face.
+    version: "1.4.1"
 
-model-defaults:
+defaults:
   n-parallel: 1
   mmap: "true" # possible that we want this as 'true', slowdown?
   ctx-token-key: q4_0

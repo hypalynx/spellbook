@@ -8,7 +8,7 @@ use std::path::PathBuf;
  version,
  arg_required_else_help = true,
  about = "xlm, LLM CLI tool",
- long_about = "A CLI tool for managing and running LLM models with YAML config.
+ long_about = "A CLI tool for managing and running LLM models via llama.cpp with YAML config.
 
  Examples:
     xlm serve llama-3.2-1b  Run a model
