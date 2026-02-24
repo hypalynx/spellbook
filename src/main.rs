@@ -3,7 +3,20 @@ use std::fs;
 use std::path::PathBuf;
 
 #[derive(Parser)]
-#[command(name = "xlm", author, version, about, long_about = None)]
+#[command(name = "xlm",
+ author,
+ version,
+ arg_required_else_help = true,
+ about = "xlm, LLM CLI tool",
+ long_about = "A CLI tool for managing and running LLM models with YAML config.
+
+ Examples:
+    xlm serve llama-3.2-1b  Run a model
+    xlm config create       Create default config
+    xlm list                List available models
+    xlm --help              See this help message again!
+ "
+)]
 struct Cli {
     // Path to config file
     #[arg(short, long)]
