@@ -1,4 +1,4 @@
-use clap::Parser;
+use clap::{Parser,Args,Subcommand};
 use std::fs;
 use std::path::PathBuf;
 
@@ -18,9 +18,38 @@ use std::path::PathBuf;
  "
 )]
 struct Cli {
-    // Path to config file
+    #[clap(flatten)]
+    global: GlobalArgs,
+    #[clap(subcommand)]
+    cmd: SubCommands,
+}
+
+#[derive(Parser)]
+struct GlobalArgs {
     #[arg(short, long)]
-    config: Option<PathBuf>
+    config: Option<PathBuf>,
+}
+
+#[derive(Subcommand)]
+enum SubCommands {
+    Serve(ServeArgs),
+    Config(ConfigArgs),
+}
+
+#[derive(Args)]
+struct ServeArgs {
+    model: String,
+}
+
+#[derive(Args)]
+struct ConfigArgs {
+    #[command(subcommand)]
+    cmd: ConfigCmd,
+}
+
+#[derive(Subcommand)]
+enum ConfigCmd {
+    Create,
 }
 
 fn default_config_path() -> PathBuf {
@@ -33,8 +62,8 @@ fn default_config_path() -> PathBuf {
 fn main() {
     let cli = Cli::parse();
 
-    let use_default = cli.config.is_none();
-    let config_path = cli.config.unwrap_or_else(default_config_path);
+    let use_default = cli.global.config.is_none();
+    let config_path = cli.global.config.unwrap_or_else(default_config_path);
 
     if !use_default && !config_path.exists() {
         eprintln!("Config file not found: {:?}", config_path);
