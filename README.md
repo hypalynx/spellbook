@@ -81,3 +81,10 @@ models:
     top-k: 30
     repeat-penalty: 1.15
 ```
+
+## Releasing
+
+The `release.sh` script builds for Linux amd64 and Apple Silicon.
+
+You'll need cross-compilation targets i.e:
+`rustup target add aarch64-apple-darwin`
