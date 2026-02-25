@@ -1,5 +1,20 @@
-use crate::config::Config;
 use crate::checks::verify_dependencies;
+use crate::config::Config;
+
+fn expand_path(path: &str) -> std::path::PathBuf {
+    let home = dirs::home_dir().or_else(|| std::env::var("HOME").ok().map(|h| h.into()));
+    if let Some(home) = home {
+        let stripped = if path.starts_with("~") {
+            path[1..].trim_start_matches('/')
+        } else if path.starts_with("$HOME") {
+            path[5..].trim_start_matches('/')
+        } else {
+            return path.into();
+        };
+        return home.join(stripped);
+    }
+    path.into()
+}
 
 pub fn serve_model(model_name: &str, config: &Config) {
     verify_dependencies(config);
@@ -7,20 +22,13 @@ pub fn serve_model(model_name: &str, config: &Config) {
         eprintln!("Model '{}' not found.", model_name);
         eprintln!(
             "Available: {}",
-            config
-                .models
-                .keys()
-                .cloned()
-                .collect::<Vec<_>>()
-                .join(", ")
+            config.models.keys().cloned().collect::<Vec<_>>().join(", ")
         );
         std::process::exit(1);
     });
 
-    let model_path = dirs::home_dir()
-        .expect("Could not find home dir")
-        .join("models")
-        .join(&model.source.file);
+    let models_dir = expand_path(&config.config.models_directory);
+    let model_path = models_dir.join(&model.source.file);
 
     if !model_path.exists() {
         eprintln!(
@@ -28,8 +36,13 @@ pub fn serve_model(model_name: &str, config: &Config) {
             model.source.repo, model.source.file
         );
         let status = std::process::Command::new("hf")
-            .args(["download", &model.source.repo, &model.source.file, "--local-dir"])
-            .arg(dirs::home_dir().unwrap().join("models"))
+            .args([
+                "download",
+                &model.source.repo,
+                &model.source.file,
+                "--local-dir",
+            ])
+            .arg(&models_dir)
             .status()
             .expect("Failed to run hf; install with: pip install huggingface-hub");
         if !status.success() {

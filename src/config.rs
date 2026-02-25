@@ -4,10 +4,22 @@ use std::collections::HashMap;
 #[derive(Deserialize)]
 pub struct Config {
     #[serde(default)]
-    pub tools: Tools,
+    pub config: UserConfig,
     #[serde(rename = "model-defaults", default)]
     pub model_defaults: ModelDefaults,
     pub models: HashMap<String, ModelConfig>,
+}
+
+#[derive(Deserialize, Default)]
+pub struct UserConfig {
+    #[serde(rename = "models-directory", default = "default_models_dir")]
+    pub models_directory: String,
+    #[serde(default)]
+    pub tools: Tools,
+}
+
+fn default_models_dir() -> String {
+    "~models".into()
 }
 
 #[derive(Deserialize, Default)]

@@ -2,17 +2,18 @@ mod checks;
 mod config;
 mod serve;
 
-use clap::{Parser, Args, Subcommand};
+use clap::{Args, Parser, Subcommand};
 use std::fs;
 use std::path::PathBuf;
 
 #[derive(Parser)]
-#[command(name = "lmx",
- author,
- version,
- arg_required_else_help = true,
- about = "lmx, Language Model eXperimentation CLI tool",
- long_about = "A CLI tool for managing and running LLM models via llama.cpp with YAML config.
+#[command(
+    name = "lmx",
+    author,
+    version,
+    arg_required_else_help = true,
+    about = "lmx, Language Model eXperimentation CLI tool",
+    long_about = "A CLI tool for managing and running LLM models via llama.cpp with YAML config.
 
  Examples:
     lmx serve llama-3.2-1b  Run a model
@@ -90,12 +91,14 @@ fn main() {
     let cfg: config::Config = serde_yaml::from_str(&contents).expect("Failed to parse config");
 
     match cli.cmd {
+        SubCommands::List => {
+            for name in cfg.models.keys() {
+                println!("{}", name);
+            }
+        }
         SubCommands::Serve(args) => serve::serve_model(&args.model, &cfg),
         SubCommands::Config(cfg_args) => match cfg_args.cmd {
             ConfigCmd::Create => println!("Config already at: {:?}", config_path),
         },
-        SubCommands::List => for name in cfg.models.keys() {
-            println!("{}", name);
-        }
     }
 }

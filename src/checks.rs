@@ -4,14 +4,14 @@ use std::process::Command;
 pub fn verify_dependencies(config: &Config) {
     check_hf_cli();
     check_llama_server();
-    check_tool_version("opencode", &config.tools.opencode.version);
-    check_tool_version("llama-server", &config.tools.llama_cpp.version);
+    check_tool_version("opencode", &config.config.tools.opencode.version);
+    check_tool_version("llama-server", &config.config.tools.llama_cpp.version);
 }
 
 fn check_hf_cli() {
     if !command_exists("hf") {
         eprintln!("Error: huggingface-hub CLI not found");
-        eprintln!("Install with: pip install huggingface-hub");
+        eprintln!("Install with: brew install python-huggingface-hub (mac) or huggingface-cli (arch linux)");
         std::process::exit(1);
     }
 }
@@ -67,17 +67,16 @@ fn get_tool_version(tool: &str) -> Option<String> {
 
     version_output.and_then(|s| {
         // Look for version line with git SHA in parentheses: "version: 113 (05fa625e)"
-        s.lines()
-            .find_map(|line| {
-                if let Some(start) = line.find('(') {
-                    if let Some(end) = line.find(')') {
-                        let sha = &line[start + 1..end];
-                        if sha.len() == 8 && sha.chars().all(|c| c.is_ascii_hexdigit()) {
-                            return Some(sha.to_string());
-                        }
+        s.lines().find_map(|line| {
+            if let Some(start) = line.find('(') {
+                if let Some(end) = line.find(')') {
+                    let sha = &line[start + 1..end];
+                    if sha.len() == 8 && sha.chars().all(|c| c.is_ascii_hexdigit()) {
+                        return Some(sha.to_string());
                     }
                 }
-                None
-            })
+            }
+            None
+        })
     })
 }
