@@ -37,6 +37,7 @@ struct GlobalArgs {
 #[derive(Subcommand)]
 enum SubCommands {
     Serve(ServeArgs),
+    List,
     Config(ConfigArgs),
 }
 
@@ -93,5 +94,8 @@ fn main() {
         SubCommands::Config(cfg_args) => match cfg_args.cmd {
             ConfigCmd::Create => println!("Config already at: {:?}", config_path),
         },
+        SubCommands::List => for name in cfg.models.keys() {
+            println!("{}", name);
+        }
     }
 }
