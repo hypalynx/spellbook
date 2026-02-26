@@ -5,19 +5,19 @@ OS="$(uname -s)"
 ARCH="$(uname -m)"
 
 build_linux() {
-    echo "Building lmx for Linux (amd64)..."
+    echo "Building spellbook for Linux (amd64)..."
     cargo build --release --target x86_64-unknown-linux-gnu
-    cp target/x86_64-unknown-linux-gnu/release/lmx lmx-linux-amd64
-    chmod +x lmx-linux-amd64
-    echo "Created lmx-linux-amd64"
+    cp target/x86_64-unknown-linux-gnu/release/spellbook spellbook-linux-amd64
+    chmod +x spellbook-linux-amd64
+    echo "Created spellbook-linux-amd64"
 }
 
 build_macos() {
-    echo "Building lmx for macOS (arm64)..."
+    echo "Building spellbook for macOS (arm64)..."
     cargo build --release --target aarch64-apple-darwin
-    cp target/aarch64-apple-darwin/release/lmx lmx-macos-arm64
-    chmod +x lmx-macos-arm64
-    echo "Created lmx-macos-arm64"
+    cp target/aarch64-apple-darwin/release/spellbook spellbook-macos-arm64
+    chmod +x spellbook-macos-arm64
+    echo "Created spellbook-macos-arm64"
 }
 
 case "$OS" in

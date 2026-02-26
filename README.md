@@ -1,6 +1,6 @@
 # LMX - Language Model eXperimentation CLI Tool
 
-_lmx is a CLI tool you can use to configure and run LLMs
+_spellbook is a CLI tool you can use to configure and run LLMs
 locally using opencode + llama.cpp._
 
 This tool was created so I could test out different language
@@ -9,18 +9,18 @@ since they both update very frequently).
 
 ## Getting Started
 
-- `lmx config create` will create a minimal config for you.
-- `lmx config edit` (optional) if you want to setup your own
+- `spellbook config create` will create a minimal config for you.
+- `spellbook config edit` (optional) if you want to setup your own
   models/tweak settings, it will open the config file with
   whatever is set to `EDITOR` in your shell configuration.
-- `lmx serve llama-3.2-3b` will run the model using the
+- `spellbook serve llama-3.2-3b` will run the model using the
   configuration you've defined.
 - Then you can use `opencode` to connect to your running LLM
   server (via llama.cpp) and start prompting!
 
 ## Example Configuration
 
-`lmx` will read a YAML file that it uses for configuration,
+`spellbook` will read a YAML file that it uses for configuration,
 here's what I use:
 
 ```yaml

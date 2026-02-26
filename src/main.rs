@@ -8,18 +8,18 @@ use std::path::PathBuf;
 
 #[derive(Parser)]
 #[command(
-    name = "lmx",
+    name = "spellbook",
     author,
     version,
     arg_required_else_help = true,
-    about = "lmx, Language Model eXperimentation CLI tool",
+    about = "spellbook, Language Model eXperimentation CLI tool",
     long_about = "A CLI tool for managing and running LLM models via llama.cpp with YAML config.
 
  Examples:
-    lmx serve llama-3.2-1b  Run a model
-    lmx config create       Create default config
-    lmx list                List available models
-    lmx --help              See this help message again!
+    spellbook serve llama-3.2-1b  Run a model
+    spellbook config create       Create default config
+    spellbook list                List available models
+    spellbook --help              See this help message again!
  "
 )]
 struct Cli {
@@ -61,8 +61,8 @@ enum ConfigCmd {
 fn default_config_path() -> PathBuf {
     dirs::config_dir()
         .unwrap_or_else(|| PathBuf::from(".")) // more graceful handling?
-        .join("lmx")
-        .join("lmx.yaml")
+        .join("spellbook")
+        .join("spellbook.yaml")
 }
 
 fn main() {
