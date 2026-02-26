@@ -1,4 +1,4 @@
-# LMX - Language Model eXperimentation CLI Tool
+# Spellbook
 
 _spellbook is a CLI tool you can use to configure and run LLMs
 locally using opencode + llama.cpp._

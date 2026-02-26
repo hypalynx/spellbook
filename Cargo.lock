@@ -230,17 +230,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "d26c52dbd32dccf2d10cac7725f8eae5296885fb5703b261f7d0a0739ec807ab"
 
 [[package]]
-name = "spellbook"
-version = "0.1.0"
-dependencies = [
- "clap",
- "dirs",
- "serde",
- "serde_yaml",
- "which",
-]
-
-[[package]]
 name = "once_cell_polyfill"
 version = "1.70.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -341,6 +330,17 @@ dependencies = [
  "ryu",
  "serde",
  "unsafe-libyaml",
+]
+
+[[package]]
+name = "spellbook"
+version = "0.1.0"
+dependencies = [
+ "clap",
+ "dirs",
+ "serde",
+ "serde_yaml",
+ "which",
 ]
 
 [[package]]
