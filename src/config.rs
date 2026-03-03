@@ -1,7 +1,7 @@
 use serde::Deserialize;
 use std::collections::HashMap;
 
-#[derive(Deserialize)]
+#[derive(Deserialize, Clone)]
 pub struct Config {
     #[serde(default)]
     pub config: UserConfig,
@@ -10,7 +10,7 @@ pub struct Config {
     pub models: HashMap<String, ModelConfig>,
 }
 
-#[derive(Deserialize, Default)]
+#[derive(Deserialize, Default, Clone)]
 pub struct UserConfig {
     #[serde(rename = "models-directory", default = "default_models_dir")]
     pub models_directory: String,
@@ -22,23 +22,21 @@ fn default_models_dir() -> String {
     "~models".into()
 }
 
-#[derive(Deserialize, Default)]
+#[derive(Deserialize, Default, Clone)]
 pub struct Tools {
-    #[serde(rename = "auto-install", default)]
-    pub auto_install: bool,
     #[serde(default)]
     pub opencode: ToolVersion,
     #[serde(rename = "llama.cpp", default)]
     pub llama_cpp: ToolVersion,
 }
 
-#[derive(Deserialize, Default)]
+#[derive(Deserialize, Default, Clone)]
 pub struct ToolVersion {
     #[serde(default)]
     pub version: String,
 }
 
-#[derive(Deserialize, Default)]
+#[derive(Deserialize, Default, Clone)]
 pub struct ModelDefaults {
     #[serde(rename = "n-parallel", default = "default_n_parallel")]
     pub n_parallel: u32,
@@ -52,7 +50,7 @@ pub struct ModelDefaults {
     pub threads: u32,
 }
 
-#[derive(Deserialize)]
+#[derive(Deserialize, Clone)]
 pub struct ModelConfig {
     pub source: ModelSource,
     #[serde(default = "default_context")]
@@ -77,7 +75,7 @@ pub struct ModelConfig {
     pub mlock: bool,
 }
 
-#[derive(Deserialize)]
+#[derive(Deserialize, Clone)]
 pub struct ModelSource {
     pub repo: String,
     pub file: String,

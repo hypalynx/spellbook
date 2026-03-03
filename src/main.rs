@@ -1,5 +1,7 @@
 mod checks;
+mod completions;
 mod config;
+mod daemon;
 mod serve;
 
 use clap::{Args, Parser, Subcommand};
@@ -16,10 +18,14 @@ use std::path::PathBuf;
     long_about = "A CLI tool for managing and running LLM models via llama.cpp with YAML config.
 
  Examples:
-    spellbook serve llama-3.2-1b  Run a model
-    spellbook config create       Create default config
-    spellbook list                List available models
-    spellbook --help              See this help message again!
+    spellbook serve llama-3.2-1b  Run a model in foreground
+    spellbook daemon llama-3.2-1b  Start daemon with model
+    spellbook switch llama-3.2-3b  Switch daemon to new model
+    spellbook logs                 View daemon logs
+    spellbook list                 List available models
+    spellbook config create        Create default config
+    spellbook completions install  Install shell completions
+    spellbook --help               See this help message again!
  "
 )]
 struct Cli {
@@ -40,10 +46,25 @@ enum SubCommands {
     Serve(ServeArgs),
     List,
     Config(ConfigArgs),
+    Daemon(DaemonArgs),
+    Switch(SwitchArgs),
+    Stop,
+    Logs,
+    Completions(CompletionsArgs),
 }
 
 #[derive(Args)]
 struct ServeArgs {
+    model: String,
+}
+
+#[derive(Args)]
+struct DaemonArgs {
+    model: String,
+}
+
+#[derive(Args)]
+struct SwitchArgs {
     model: String,
 }
 
@@ -58,9 +79,15 @@ enum ConfigCmd {
     Create,
 }
 
+#[derive(Args)]
+struct CompletionsArgs {
+    shell: String,
+}
+
 fn default_config_path() -> PathBuf {
-    dirs::config_dir()
-        .unwrap_or_else(|| PathBuf::from(".")) // more graceful handling?
+    dirs::home_dir()
+        .unwrap_or_else(|| PathBuf::from("."))
+        .join(".config")
         .join("spellbook")
         .join("spellbook.yaml")
 }
@@ -73,7 +100,7 @@ fn main() {
 
     if !use_default && !config_path.exists() {
         eprintln!("Config file not found: {:?}", config_path);
-        eprintln!("Create one with `xlm config create` or use --config <path>");
+        eprintln!("Create one with `spellbook config create` or use --config <path>");
         std::process::exit(1);
     } else if use_default && !config_path.exists() {
         if let Some(parent) = config_path.parent() {
@@ -84,10 +111,7 @@ fn main() {
         println!("Created default config at: {:?}", config_path);
     }
 
-    println!("Reading config from {:?}", config_path);
-
     let contents = fs::read_to_string(&config_path).expect("Failed to read config file");
-
     let cfg: config::Config = serde_yaml::from_str(&contents).expect("Failed to parse config");
 
     match cli.cmd {
@@ -97,8 +121,29 @@ fn main() {
             }
         }
         SubCommands::Serve(args) => serve::serve_model(&args.model, &cfg),
+        SubCommands::Daemon(args) => daemon::start_daemon(&args.model, &cfg),
+        SubCommands::Switch(args) => daemon::switch_model(&args.model, &cfg),
+        SubCommands::Stop => daemon::stop_daemon(),
+        SubCommands::Logs => daemon::show_logs(),
         SubCommands::Config(cfg_args) => match cfg_args.cmd {
             ConfigCmd::Create => println!("Config already at: {:?}", config_path),
         },
+        SubCommands::Completions(args) => {
+            if args.shell == "install" {
+                if let Some(shell) = completions::auto_detect_shell() {
+                    completions::install(&shell).expect("Failed to install completions");
+                } else {
+                    eprintln!("Could not auto-detect shell. Please specify: bash, zsh, or fish");
+                    std::process::exit(1);
+                }
+            } else if let Some(shell) = completions::Shell::from_str(&args.shell) {
+                print!("{}", completions::generate(&shell));
+            } else {
+                eprintln!("Unknown shell: {}", args.shell);
+                eprintln!("Supported shells: bash, zsh, fish");
+                eprintln!("Or use 'install' to auto-detect and install");
+                std::process::exit(1);
+            }
+        }
     }
 }

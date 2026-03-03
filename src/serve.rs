@@ -4,10 +4,10 @@ use crate::config::Config;
 fn expand_path(path: &str) -> std::path::PathBuf {
     let home = dirs::home_dir().or_else(|| std::env::var("HOME").ok().map(|h| h.into()));
     if let Some(home) = home {
-        let stripped = if path.starts_with("~") {
-            path[1..].trim_start_matches('/')
-        } else if path.starts_with("$HOME") {
-            path[5..].trim_start_matches('/')
+        let stripped = if let Some(s) = path.strip_prefix("~") {
+            s.trim_start_matches('/')
+        } else if let Some(s) = path.strip_prefix("$HOME") {
+            s.trim_start_matches('/')
         } else {
             return path.into();
         };
