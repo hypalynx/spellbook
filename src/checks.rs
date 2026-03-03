@@ -4,7 +4,6 @@ use std::process::Command;
 pub fn verify_dependencies(config: &Config) {
     check_hf_cli();
     check_llama_server();
-    check_tool_version("opencode", &config.config.tools.opencode.version);
     check_tool_version("llama-server", &config.config.tools.llama_cpp.version);
 }
 
@@ -50,7 +49,6 @@ fn command_exists(cmd: &str) -> bool {
 
 fn get_tool_version(tool: &str) -> Option<String> {
     let output = match tool {
-        "opencode" => Command::new("opencode").arg("--version").output().ok()?,
         "llama-server" => {
             // llama-server outputs version to stderr
             Command::new("llama-server")

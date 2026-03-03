@@ -24,8 +24,6 @@ fn default_models_dir() -> String {
 
 #[derive(Deserialize, Default, Clone)]
 pub struct Tools {
-    #[serde(default)]
-    pub opencode: ToolVersion,
     #[serde(rename = "llama.cpp", default)]
     pub llama_cpp: ToolVersion,
 }

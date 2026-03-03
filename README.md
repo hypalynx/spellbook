@@ -1,11 +1,11 @@
 # Spellbook
 
 _spellbook is a CLI tool you can use to configure and run LLMs
-locally using opencode + llama.cpp._
+locally using llama.cpp._
 
 This tool was created so I could test out different language
-models locally and keep opencode/llama.cpp up to date (or pinned
-since they both update very frequently).
+models locally and keep llama.cpp up to date (or pinned since it
+updates very frequently).
 
 ## Getting Started
 
@@ -15,8 +15,8 @@ since they both update very frequently).
   whatever is set to `EDITOR` in your shell configuration.
 - `spellbook serve llama-3.2-3b` will run the model using the
   configuration you've defined.
-- Then you can use `opencode` to connect to your running LLM
-  server (via llama.cpp) and start prompting!
+- Then you can connect to your running LLM server (via llama.cpp)
+  and start prompting!
 
 ## Example Configuration
 
@@ -25,9 +25,6 @@ here's what I use:
 
 ```yaml
 tools:
-  auto-install: true
-  opencode: # An agentic interface to interact with models.
-    version: "1.2.3"
   llama.cpp: # used to run the LLM models you download.
     version: "05fa625e"
 

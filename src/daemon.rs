@@ -12,6 +12,7 @@ use std::time::Duration;
 const DAEMON_SOCK: &str = "daemon.sock";
 const DAEMON_PID: &str = "daemon.pid";
 const LLAMA_LOG: &str = "llama-server.log";
+const CURRENT_MODEL: &str = "current_model.txt";
 
 fn data_dir() -> PathBuf {
     dirs::home_dir()
@@ -49,6 +50,16 @@ fn remove_socket() -> io::Result<()> {
     let sock_path = data_dir().join(DAEMON_SOCK);
     fs::remove_file(sock_path).ok();
     Ok(())
+}
+
+fn write_current_model(model: &str) -> io::Result<()> {
+    let model_path = ensure_data_dir()?.join(CURRENT_MODEL);
+    fs::write(model_path, model)
+}
+
+fn read_current_model() -> Option<String> {
+    let model_path = data_dir().join(CURRENT_MODEL);
+    fs::read_to_string(model_path).ok()
 }
 
 fn is_daemon_running() -> bool {
@@ -184,6 +195,7 @@ fn daemon_process_loop(initial_model: String, config: Config) {
 
                                 current_child = spawn_llama_server(new_model, &config);
                                 _current_model = new_model.to_string();
+                                let _ = write_current_model(new_model);
                             } else {
                                 let _ = stream.write_all(
                                     format!("Error: model '{}' not found\n", new_model).as_bytes(),
@@ -238,6 +250,10 @@ pub fn start_daemon(model: &str, config: &Config) {
                 Ok(ForkResult::Child) => {
                     if let Err(e) = write_pid_file(nix::unistd::getpid()) {
                         eprintln!("Failed to write PID file: {}", e);
+                        std::process::exit(1);
+                    }
+                    if let Err(e) = write_current_model(model) {
+                        eprintln!("Failed to write current model: {}", e);
                         std::process::exit(1);
                     }
                     daemon_process_loop(model.to_string(), config.clone());
@@ -359,5 +375,23 @@ pub fn show_logs() {
             Ok(l) => println!("{}", l),
             Err(_) => break,
         }
+    }
+}
+
+pub fn show_status() {
+    if let Some(pid) = read_pid_file() {
+        if kill(pid, None).is_ok() {
+            println!("Daemon Status: running");
+            println!("PID: {}", pid);
+            if let Some(model) = read_current_model() {
+                println!("Current Model: {}", model.trim());
+            } else {
+                println!("Current Model: unknown");
+            }
+        } else {
+            println!("Daemon Status: not running");
+        }
+    } else {
+        println!("Daemon Status: not running");
     }
 }

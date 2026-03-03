@@ -21,6 +21,7 @@ use std::path::PathBuf;
     spellbook serve llama-3.2-1b  Run a model in foreground
     spellbook daemon llama-3.2-1b  Start daemon with model
     spellbook switch llama-3.2-3b  Switch daemon to new model
+    spellbook status               Check daemon and current model
     spellbook logs                 View daemon logs
     spellbook list                 List available models
     spellbook config create        Create default config
@@ -49,6 +50,7 @@ enum SubCommands {
     Daemon(DaemonArgs),
     Switch(SwitchArgs),
     Stop,
+    Status,
     Logs,
     Completions(CompletionsArgs),
 }
@@ -124,6 +126,7 @@ fn main() {
         SubCommands::Daemon(args) => daemon::start_daemon(&args.model, &cfg),
         SubCommands::Switch(args) => daemon::switch_model(&args.model, &cfg),
         SubCommands::Stop => daemon::stop_daemon(),
+        SubCommands::Status => daemon::show_status(),
         SubCommands::Logs => daemon::show_logs(),
         SubCommands::Config(cfg_args) => match cfg_args.cmd {
             ConfigCmd::Create => println!("Config already at: {:?}", config_path),
