@@ -2,7 +2,7 @@ use crate::config::Config;
 use nix::sys::signal::{Signal, kill};
 use nix::unistd::{ForkResult, Pid, fork};
 use std::fs::{self, File, OpenOptions};
-use std::io::{self, BufRead, Read, Write};
+use std::io::{self, BufRead, Read, Seek, SeekFrom, Write};
 use std::os::unix::net::{UnixListener, UnixStream};
 use std::path::PathBuf;
 use std::process::{Command, Stdio};
@@ -108,7 +108,7 @@ fn spawn_llama_server(model_name: &str, config: &Config) -> Option<std::process:
     cmd.args([
         "-m",
         model_path.to_str()?,
-        "--model-alias",
+        "--alias",
         model_name,
         "--jinja",
         "--host",
@@ -353,7 +353,7 @@ pub fn stop_daemon() {
     }
 }
 
-pub fn show_logs() {
+pub fn show_logs(follow: bool) {
     let log_path = data_dir().join(LLAMA_LOG);
 
     if !log_path.exists() {
@@ -361,7 +361,8 @@ pub fn show_logs() {
         return;
     }
 
-    let file = match File::open(&log_path) {
+    // Read and print all existing lines
+    let mut file = match File::open(&log_path) {
         Ok(f) => f,
         Err(e) => {
             eprintln!("Failed to open log file: {}", e);
@@ -369,11 +370,39 @@ pub fn show_logs() {
         }
     };
 
-    let reader = io::BufReader::new(file);
+    let reader = io::BufReader::new(&mut file);
     for line in reader.lines() {
         match line {
             Ok(l) => println!("{}", l),
             Err(_) => break,
+        }
+    }
+
+    // Track position for follow mode
+    let mut pos = match file.seek(SeekFrom::Current(0)) {
+        Ok(p) => p,
+        Err(_) => return,
+    };
+
+    // Follow new lines if requested
+    if follow {
+        loop {
+            thread::sleep(Duration::from_millis(200));
+            let mut file = match File::open(&log_path) {
+                Ok(f) => f,
+                Err(_) => break,
+            };
+            if let Err(_) = file.seek(SeekFrom::Start(pos)) {
+                break;
+            }
+            let mut buf = String::new();
+            if let Err(_) = file.read_to_string(&mut buf) {
+                break;
+            }
+            if !buf.is_empty() {
+                print!("{}", buf);
+                pos += buf.len() as u64;
+            }
         }
     }
 }

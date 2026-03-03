@@ -51,7 +51,7 @@ enum SubCommands {
     Switch(SwitchArgs),
     Stop,
     Status,
-    Logs,
+    Logs(LogsArgs),
     Completions(CompletionsArgs),
 }
 
@@ -84,6 +84,12 @@ enum ConfigCmd {
 #[derive(Args)]
 struct CompletionsArgs {
     shell: String,
+}
+
+#[derive(Args)]
+struct LogsArgs {
+    #[arg(short = 'f', long = "follow")]
+    follow: bool,
 }
 
 fn default_config_path() -> PathBuf {
@@ -127,7 +133,7 @@ fn main() {
         SubCommands::Switch(args) => daemon::switch_model(&args.model, &cfg),
         SubCommands::Stop => daemon::stop_daemon(),
         SubCommands::Status => daemon::show_status(),
-        SubCommands::Logs => daemon::show_logs(),
+        SubCommands::Logs(args) => daemon::show_logs(args.follow),
         SubCommands::Config(cfg_args) => match cfg_args.cmd {
             ConfigCmd::Create => println!("Config already at: {:?}", config_path),
         },
