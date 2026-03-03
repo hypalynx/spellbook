@@ -379,7 +379,7 @@ pub fn show_logs(follow: bool) {
     }
 
     // Track position for follow mode
-    let mut pos = match file.seek(SeekFrom::Current(0)) {
+    let mut pos = match file.stream_position() {
         Ok(p) => p,
         Err(_) => return,
     };
@@ -392,11 +392,11 @@ pub fn show_logs(follow: bool) {
                 Ok(f) => f,
                 Err(_) => break,
             };
-            if let Err(_) = file.seek(SeekFrom::Start(pos)) {
+            if file.seek(SeekFrom::Start(pos)).is_err() {
                 break;
             }
             let mut buf = String::new();
-            if let Err(_) = file.read_to_string(&mut buf) {
+            if file.read_to_string(&mut buf).is_err() {
                 break;
             }
             if !buf.is_empty() {
