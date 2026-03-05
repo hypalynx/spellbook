@@ -148,6 +148,12 @@ fn spawn_llama_server(model_name: &str, config: &Config) -> Option<std::process:
     if !d.mmap {
         cmd.arg("--no-mmap");
     }
+    if model.flash_attn {
+        cmd.args(["-fa", "on"]);
+    }
+    if let Some(kwargs) = &model.chat_template_kwargs {
+        cmd.args(["--chat-template-kwargs", kwargs]);
+    }
 
     cmd.spawn().ok()
 }

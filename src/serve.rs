@@ -92,6 +92,12 @@ pub fn serve_model(model_name: &str, config: &Config) {
     if !d.mmap {
         cmd.arg("--no-mmap");
     }
+    if model.flash_attn {
+        cmd.args(["-fa", "on"]);
+    }
+    if let Some(kwargs) = &model.chat_template_kwargs {
+        cmd.args(["--chat-template-kwargs", kwargs]);
+    }
 
     cmd.status().expect("Failed to run llama-server");
 }

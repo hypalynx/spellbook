@@ -71,6 +71,10 @@ pub struct ModelConfig {
     pub host: String,
     #[serde(default)]
     pub mlock: bool,
+    #[serde(rename = "flash-attn", default)]
+    pub flash_attn: bool,
+    #[serde(rename = "chat-template-kwargs", default)]
+    pub chat_template_kwargs: Option<String>,
 }
 
 #[derive(Deserialize, Clone)]
