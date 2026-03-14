@@ -54,7 +54,7 @@ pub struct ModelConfig {
     #[serde(default = "default_context")]
     pub context: u32,
     #[serde(rename = "gpu-layers", default)]
-    pub gpu_layers: u32,
+    pub gpu_layers: i32,
     #[serde(default = "default_temp")]
     pub temp: f32,
     #[serde(rename = "top-p", default = "default_top_p")]
